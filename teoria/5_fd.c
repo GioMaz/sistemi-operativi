@@ -7,12 +7,29 @@
 
 int main(void)
 {
-    int fd = open("input.txt", O_RDONLY, S_IRUSR);
-
+    int fd1, fd2, fd3;
+    ssize_t n;
     size_t size = 10;
     char string[size];
-    ssize_t n = read(fd, string, size-1);
-    string[n] = 0;
 
+    // Read first 8 characters
+    fd1 = open("input.txt", O_RDONLY, S_IRUSR);
+    n = read(fd1, string, size-1);
+    string[n] = 0;
     printf("%s\n", string);
+
+    // Duplicate file descriptor and read next 8 characters
+    fd2 = dup(fd1);
+    n = read(fd2, string, size-1);
+    string[n] = 0;
+    printf("%s\n", string);
+
+    // Duplicate file descriptor to arbitrary number
+    // and read the next 8 characters
+    fd3 = dup2(fd2, 69);
+    n = read(fd3, string, size-1);
+    string[n] = 0;
+    printf("%s\n", string);
+
+    close(fd3);
 }
